@@ -13,8 +13,11 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -27,7 +30,7 @@ jobs:
       - name: Build Web Assets
         run: npm run build
 
-      - name: Setup Android Project
+      - name: Setup Android Platform
         run: |
           if [ ! -d "android" ] || [ ! -f "android/gradlew" ]; then
             rm -rf android
@@ -41,10 +44,10 @@ jobs:
       - name: Build Debug APK
         run: |
           cd android
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/debug/*.apk
