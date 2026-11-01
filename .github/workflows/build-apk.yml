@@ -21,10 +21,18 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install Dependencies & Build Web
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Web Assets
+        run: npm run build
+
+      - name: Setup Android Project
         run: |
-          npm install --legacy-peer-deps
-          npm run build
+          if [ ! -d "android" ] || [ ! -f "android/gradlew" ]; then
+            rm -rf android
+            npx cap add android
+          fi
           npx cap sync android
 
       - name: Make Gradle Executable
